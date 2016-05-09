@@ -28,14 +28,15 @@ int main()
 
         cheminPlusCourt(database, depart, arrivee);
 
-        printf("RECHERCHER UN AUTRE ITINERAIRE ? (1 oui  0 non)");
+        printf("RECHERCHER UN AUTRE ITINERAIRE 1\n");
+        printf("QUITTER 0\n");
 
         scanf("%d", &continuer);
-        while(continuer != 0 || continuer != 1){
-            printf("J'espere que tu es content de toi !\n");
+
+        while(continuer != 0 && continuer != 1){
+            printf("T'es un boulet ou ... ?\n");
             scanf("%d", &continuer);
         }
-
     }
     return 0;
 }
