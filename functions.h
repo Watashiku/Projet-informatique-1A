@@ -21,6 +21,8 @@ struct graphe
 {
     Sommet* sommets;
     Arc* arcs;
+    int nbSommets;
+    int nbArcs;
 };
 typedef struct graphe Graphe;
 
@@ -42,6 +44,7 @@ typedef struct db DB;
 
 void lectureDB(DB db);
 DB creation(char* path);
-void bellman(Graphe G);
+void bellman(Graphe g, int S);
+void cheminPlusCourt(DB db, int depart, int arrivee);
 
 #endif // FUNCTIONS_H_INCLUDED
