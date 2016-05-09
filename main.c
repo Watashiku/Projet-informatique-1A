@@ -4,7 +4,8 @@
 
 int main()
 {
-    DB database=creation("graphe1.csv");
+    DB database=creation("metro.csv");
     lectureDB(database);
+    cheminPlusCourt(database, 1, 100);
     return 0;
 }
