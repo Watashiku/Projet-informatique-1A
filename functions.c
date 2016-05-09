@@ -2,29 +2,48 @@
 #include "functions.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "limits.h"
 
-Graphe creation(char* path){
-    Graphe lol;
+void lectureDB(DB db){
+    for(int i=0; i<10; i++){
+        printf("Sommet %d : nom = %s", i, db.t[i].nom);
+    }
+}
+
+DB creation(char* path){
+    DB db;
     int nbSommets, nbArcs;
-    char test[1000];
+    char test[511];
     FILE* f = NULL;
     f = fopen(path,"r");
     if(f!=NULL){
-        long pos = ftell(f);
-        printf("%ld", pos);
-        fseek(f, 0, SEEK_SET);
         fscanf(f, "%d %d", &nbSommets, &nbArcs);
-        printf("%d %d ", nbSommets, nbArcs);
-        //fseek(f, 10, SEEK_SET);
-        pos = ftell(f);
-        printf("%ld ", pos);
         fgets(test, 511, f);
-        pos = ftell(f);
-        printf("%ld ", pos);
-        printf("                    %c", test[0]);
+        printf("%d %d ", nbSommets, nbArcs);
+        fgets(test, 511, f);
+        printf("%s", test);
+        int* bin;
+        if(0==0){
+            printf("OK");
+            db.g.sommets=malloc(nbSommets*sizeof(Sommet));
+            db.g.arcs=malloc(nbArcs*sizeof(Arc));
+            db.t=malloc(nbSommets*sizeof(Noeud));
+            for(int i=0; i<nbSommets; i++){
+                db.g.sommets[i].pere=-1;
+                db.g.sommets[i].poids=100000;
+                printf("%f", db.g.sommets[i].poids);
+                fscanf(f,"%d %f %f %s", bin, &(db.t[i].lat), &(db.t[i].lon), db.t[i].nomLigne); // erreur ici
+                printf("%s", db.t[i].nomLigne);
+                fgets(db.t[i].nom,511,f);
+                if ((db.t[i].nom)[strlen(db.t[i].nom)-1]<32) (db.t[i].nom)[strlen(db.t[i].nom)-1]=0;
+            }
+            fgets(test, 511, f);
+            for(int i=0; i<nbArcs;i++){
+                fscanf(f,"%d %d %lf", &(db.g.arcs[i].depart), &(db.g.arcs[i].arrivee), &(db.g.arcs[i].valeur));
+            }
+        }
     }
-    return lol;
-
+    return db;
 }
 
 void bellman(Graphe G){

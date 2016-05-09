@@ -22,10 +22,26 @@ struct graphe
     Sommet* sommets;
     Arc* arcs;
 };
-
 typedef struct graphe Graphe;
 
-Graphe creation(char* path);
+struct noeud
+{
+    double lat;
+    double lon;
+    char nomLigne[511];
+    char nom[511];
+};
+typedef struct noeud Noeud;
+
+struct db
+{
+    Graphe g;
+    Noeud* t;
+};
+typedef struct db DB;
+
+void lectureDB(DB db);
+DB creation(char* path);
 void bellman(Graphe G);
 
 #endif // FUNCTIONS_H_INCLUDED
