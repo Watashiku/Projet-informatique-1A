@@ -43,8 +43,9 @@ struct db
 typedef struct db DB;
 
 void lectureDB(DB db);
-DB creation(char* path);
+DB creation(char*);
 void bellman(Graphe g, int S);
-void cheminPlusCourt(DB db, int depart, int arrivee);
+void cheminPlusCourt(DB, int , int );
+void affichageTemps(int);
 
 #endif // FUNCTIONS_H_INCLUDED
