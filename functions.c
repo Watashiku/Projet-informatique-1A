@@ -2,9 +2,11 @@
 #include "functions.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "limits.h"
+#include <float.h>
 
-#define INFINI 1000000
+#define INFINI DBL_MAX
 
 void lectureDB(DB db){
     int i;
@@ -26,7 +28,7 @@ DB creation(char* path){
         fgets(test, 511, f);
         printf("%s\n", test);
         int bin;
-        if(0==0){
+        if(0==0){//on sait jamais
             db.g.sommets=malloc(db.g.nbSommets*sizeof(Sommet));
             db.g.arcs=malloc(db.g.nbArcs*sizeof(Arc));
             db.t=malloc(db.g.nbSommets*sizeof(Noeud));
@@ -56,7 +58,7 @@ DB creation(char* path){
 }
 
 
-//maj des peres a faire
+
 void bellman(Graphe g, int S){
     int leChangementCEstMaintenant = 0, i;
     int depart, arrivee;
@@ -85,8 +87,10 @@ void bellman(Graphe g, int S){
 
 
 void cheminPlusCourt(DB db, int depart, int arrivee){
-    int position = arrivee, duree = 0, i;
+    int position = arrivee, duree = 0, nbChangements = 0, a, i, compteur, details;
     int chemin[100];
+    int changements[100];
+    changements[0]=-10;
     chemin[0] = arrivee;
     bellman(db.g, depart);
     if (db.g.sommets[arrivee].poids == INFINI){
@@ -95,25 +99,112 @@ void cheminPlusCourt(DB db, int depart, int arrivee){
     }
     else{
         double temps = db.g.sommets[arrivee].poids;
-
         while(position != depart){
             position = db.g.sommets[position].pere;
+            if (strcmp(db.t[position].nomLigne, db.t[chemin[duree]].nomLigne)){
+                printf("changement entre %s et %s\n", db.t[chemin[duree]].nomLigne, db.t[position].nomLigne);
+                changements[nbChangements] = duree;
+                nbChangements++;
+            }
             duree++;
             chemin[duree] = position;
         }
 
 
+        for(i=0 ; i<10; i++){
+            printf("changements[%d] = %d\n", i, changements[i]);
+        }
+
+
+        compteur = nbChangements - 1;
         printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         printf("TRAJET ENTRE %s (STATION %d) ET %s (STATION %d)  \n\n\n\n", db.t[depart].nom, depart, db.t[arrivee].nom, arrivee);
-        printf("DUREE ESTIMEE : %5.1f SECONDES\n", db.g.sommets[arrivee].poids);
+        printf("DUREE ESTIMEE : \n");
+        affichageTemps(db.g.sommets[arrivee].poids);
+        printf("\n");
         printf("NOMBRE DE STATIONS TRAVERSEES : %d\n", duree);
-        printf("DETAIL DU TRAJET : \n\n");
-        for(i=duree; i>0; i--){
-            temps = db.g.sommets[chemin[i]].poids;
-            printf("%5.1f  sec :  passage par %s (station %d)\n", temps, db.t[chemin[i]].nom, chemin[i]);
+        printf("NOMBRE DE CHANGEMENT(S) : %d\n\n", nbChangements);
+
+        printf("TRAJET : \n\n");
+        temps = db.g.sommets[chemin[duree]].poids;
+
+        if(changements[0] != duree-1){
+            if(nbChangements){
+                a = changements[nbChangements-1];
+            }
+            else{
+                a = -1;
+            }
+            affichageTemps(0);
+            printf(" :  ligne %s entre %s (station %d) et %s (station %d), %d arret(s)   : ", db.t[depart].nomLigne, db.t[depart].nom, depart, db.t[chemin[duree-1-a]].nom, chemin[duree-1-a], duree-1-a);
+            affichageTemps(db.g.sommets[chemin[a+1]].poids - db.g.sommets[chemin[duree]].poids);
+            printf("\n");
+        }
+
+        for(i=duree-1; i>0; i--){
+            if(changements[compteur] == i){
+                if(compteur){
+                    a = changements[compteur] - changements[compteur-1];
+                }
+                else{
+                    a = i;
+                }
+                affichageTemps(db.g.sommets[chemin[i+1]].poids);
+                printf(" :  changement entre la ligne %s et la ligne %s : ", db.t[chemin[i+1]].nomLigne, db.t[chemin[i]].nomLigne);
+                affichageTemps(db.g.sommets[chemin[i]].poids - db.g.sommets[chemin[i+1]].poids);
+                printf("\n");
+                compteur--;
+                if(chemin[i+1]!=duree){
+                    affichageTemps(db.g.sommets[chemin[i]].poids);
+                    printf(" :  ligne %s entre %s (station %d) et %s (station %d), %d arret(s)   : ", db.t[chemin[i]].nomLigne, db.t[chemin[i]].nom, chemin[i], db.t[chemin[i-a]].nom, chemin[i-a], a-1);
+
+                    affichageTemps(db.g.sommets[chemin[i-a]].poids - db.g.sommets[chemin[i]].poids);
+                    printf("\n");
+                }
+
+            }
         }
 
         temps = db.g.sommets[arrivee].poids;
-        printf("%5.1f  sec :  arrivee a %s (station %d)\n\n\n", temps, db.t[arrivee].nom, arrivee);
+        affichageTemps(temps);
+        printf(" :  arrivee a %s (station %d, ligne %s)\n", db.t[arrivee].nom, arrivee, db.t[arrivee].nomLigne);
+
+
+        printf("TRAJET DETAILLE ? 1/0 \n");
+        scanf("%d", &details);
+        printf("\n\n");
+        if(details){
+            temps = db.g.sommets[depart].poids;
+            affichageTemps(temps);
+            printf(" :  depart de %s (station %d, ligne %s)\n", db.t[depart].nom, depart, db.t[depart].nomLigne);
+            for(i=duree-1; i>0; i--){
+                temps = db.g.sommets[chemin[i]].poids;
+                affichageTemps(temps);
+                printf(" :  passage par %s (station %d, ligne %s)\n", db.t[chemin[i]].nom, chemin[i], db.t[chemin[i]].nomLigne);
+            }
+            temps = db.g.sommets[arrivee].poids;
+            affichageTemps(temps);
+            printf(" :  arrivee a %s (station %d, ligne %s)\n", db.t[arrivee].nom, arrivee, db.t[arrivee].nomLigne);
+        }
+    }
+}
+
+void affichageTemps(int secondes){
+    int ratio = 1;
+    int heures, minutes;
+
+    secondes *=ratio;
+
+    heures = secondes/3600;
+    secondes %= 3600;
+
+    minutes = secondes/60;
+    secondes %= 60;
+
+    if(heures){
+        printf("%02dh %02dm %02ds", heures, minutes, secondes);
+    }
+    else{
+        printf("%02dm %02ds", minutes, secondes);
     }
 }
