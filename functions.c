@@ -96,7 +96,7 @@ void bellman(Graphe g, int S){
 }
 
 
-/* Fonction pricipale : 
+/* Fonction principale : 
  * elle utilise la fonction bellman(Graphe, int)
  * pour determiner le chemin le plus court entre
  * deux stations, puis l'affiche à l'écran.
