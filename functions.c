@@ -8,6 +8,10 @@
 
 #define INFINI DBL_MAX
 
+
+/* Fonction utilisée pour tester
+ * certaines données récupérées
+ */
 void lectureDB(DB db){
     int i;
     for(i=0; i<db.g.nbSommets; i++){
@@ -15,6 +19,10 @@ void lectureDB(DB db){
     }
 }
 
+
+/* Lecture du fichier, création de la DB,
+ * récuperation des données
+ */
 DB creation(char* path){
     DB db;
     int i;
@@ -58,7 +66,9 @@ DB creation(char* path){
 }
 
 
-
+/* Utilisation de l'algorithme de Bellman
+ * sur un graphe à partir d'un sommet
+ */
 void bellman(Graphe g, int S){
     int leChangementCEstMaintenant = 0, i;
     int depart, arrivee;
@@ -86,6 +96,18 @@ void bellman(Graphe g, int S){
 }
 
 
+/* Fonction pricipale : 
+ * elle utilise la fonction bellman(Graphe, int)
+ * pour determiner le chemin le plus court entre
+ * deux stations, puis l'affiche à l'écran.
+ *
+ * Comme indiqué sur le readme, l'affichage 
+ * s'effectue en deux parties. L'une indique les 
+ * changements et aide l'utilisateur en ne lui 
+ * fournissant que les informations importantes
+ * à son trajet, l'autre indique l'ensemble des 
+ * stations traversées.
+ */
 void cheminPlusCourt(DB db, int depart, int arrivee){
     int position = arrivee, duree = 0, nbChangements = 0, a, i, compteur, details;
     int chemin[100];
@@ -189,6 +211,11 @@ void cheminPlusCourt(DB db, int depart, int arrivee){
     }
 }
 
+
+/* Cette fonction convertit le poids 
+ * du trajet en temps, pour faciliter 
+ * la lecture des données.
+ */
 void affichageTemps(int secondes){
     int ratio = 1;
     int heures, minutes;
