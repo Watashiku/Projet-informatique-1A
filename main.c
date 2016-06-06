@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include "functions.h"
 
+
+/* Le main comprte l'initialisation de la DB,
+ * l'interface homme machine en entrée (choix
+ * des stations de depart et d'arrivée) ainsi
+ * qu'une boucle permettant de tester un autre 
+ * trajet.
+ */
 int main()
 {
     int depart = -1, arrivee = -1, continuer = 1;
